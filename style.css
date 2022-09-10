@@ -1,13 +1,17 @@
 body {
-    padding: 0px;
     margin: 0 auto;
-    width: 620px;
-
+    width: 608px; 
+}
+.grid-background {
+    margin: 0 auto;
+    position: absolute;
+    width: 608px;
+    height: 608px;
+    background-color: black;
 }
 
-
-
 .grid {
+    position: absolute;
     font-family: sans-serif;
     display: inline-block;
     height: 200px;
@@ -15,56 +19,53 @@ body {
     font-size: 175px;
     text-align: center;
     line-height: 200px;
-    color: white;
- 
+    background-color: white;
 }
 
-#A1 {
-    border: 2px solid transparent;
-    border-right: 2px solid black;
-    border-bottom: 2px solid black;
+#c1r1 {
+    top: 0px;
+    left: 0px;
 }
 
-#A2 {
-    border: 2px solid transparent;
-    border-right: 2px solid black;
-    border-bottom: 2px solid black;
+#c2r1 {
+    top: 0px;
+    left: 204px;
 }
 
-#A3 {
-    border: 2px solid transparent;
-    border-right: 2px solid black;
-    border-left: 2px solid transparent;
+#c3r1 {
+    top: 0px;
+    left: 408px;
 }
 
-#B1 {
-    border: 2px solid transparent;
-    border-right: 2px solid black;
-    border-bottom: 2px solid black;
-    
+#c1r2 {
+    top: 204px;
+    left: 0px;
 }
 
-#B2 {
-    border: 2px solid transparent;
-    border-right: 2px solid black;
-    border-bottom: 2px solid black;
+#c2r2 {
+    top: 204px;
+    left: 204px;
 }
 
-#B3 {
-    border: 2px solid transparent;
-    border-right: 2px solid black;
+#c3r2 {
+    top: 204px;
+    left: 408px;
 }
 
-#C1 {
-    border: 2px solid transparent;
-    border-bottom: 2px solid black;
+#c1r3 {
+    top: 408px;
+    left: 0px;
 }
 
-#C2 {
-    border: 2px solid transparent;
-    border-bottom: 2px solid black;
+#c2r3 {
+    top: 408px;
+    left: 204px;
 }
 
+#c3r3 {
+    top: 408px;
+    left: 408px;
+}
 .playerx {
     color: green;
   
