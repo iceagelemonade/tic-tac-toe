@@ -10,6 +10,17 @@ body {
     background-color: black;
 }
 
+.winSplash {
+    padding-top: 40%;
+    position: absolute;
+    width: 608px;
+    height: 608px;
+    background-color: rgb(255, 255, 255, 0.75);
+    text-align: center;
+    font-size: 50px;
+    
+}
+
 .grid {
     position: absolute;
     font-family: sans-serif;
@@ -20,6 +31,27 @@ body {
     text-align: center;
     line-height: 200px;
     background-color: white;
+}
+
+.col {
+    position: absolute;
+    width: 8px;
+    height: 580px;
+    top: 14px;
+}
+
+.row {
+    position: absolute;
+    height: 8px;
+    width: 580px;
+    left: 14px;
+}
+
+.dia {
+    position: absolute;
+    width: 12px;
+    height: 608px;
+    left: 298px;
 }
 
 #c1r1 {
@@ -71,6 +103,6 @@ body {
   
 }
 
-.player0 {
+.playero {
     color: red;
 }
