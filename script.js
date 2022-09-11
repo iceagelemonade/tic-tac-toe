@@ -194,6 +194,20 @@ const acknowledgeWin = () => {
     document.querySelector('.winSplash').remove()
     document.querySelector('.winLine').remove()
     clearAll()
+    winner = null
     document.querySelector('#win-tracker').innerText = `Player X Wins = ${xWinCount} || Player O Wins = ${oWinCount}`
 }
 
+const resetAlert = () => {
+    let text = "Warning! Resetting will clear the game board and reset the win counters\nClick 'OK' to proceed of 'Cancel' to go back."
+    if (confirm(text) === true) {
+        clearAll()
+        if (winner != null) {
+            document.querySelector('.winSplash').remove()
+            document.querySelector('.winLine').remove()
+        }
+        xWinCount = 0
+        oWinCount = 0
+        document.querySelector('#win-tracker').innerText = `Player X Wins = ${xWinCount} || Player O Wins = ${oWinCount}`
+    }
+}
