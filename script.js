@@ -21,14 +21,13 @@ const grid = document.querySelectorAll('.grid')
 const gridBackground = document.querySelector('.grid-background') 
 
 
-const checkRow = (player) => {
+const checkRow = (player,value) => {
     
     for (r = 1; r <=3; r++){
         let count = 0
         for (c = 1; c <=3; c++){
             moveTracker[`c${c}r${r}`]===player?++count:null
-            console.log(`row ${count}`)
-            if (count === 3) {
+            if (count === value) {
                 winPosition = `r${r}`
                 winner = player
                 return true
@@ -38,14 +37,13 @@ const checkRow = (player) => {
     }    
 } 
 
-const checkCol = (player) => {
+const checkCol = (player,value) => {
     
     for (c = 1; c <= 3; c++){
         let count = 0
         for (r = 1; r <= 3; r++){
             moveTracker[`c${c}r${r}`]===player?++count:null
-            console.log(`col ${count}`)
-            if (count === 3) {
+            if (count === value) {
                 winPosition = `c${c}`
                 winner = player
                 return true
@@ -113,7 +111,6 @@ const drawWin = () => {
 }
 
 const printWin = (player) => {
-    console.log(`${player} wins!`)
     drawWin()
     const playerCap = player.toUpperCase()
     const winSplash = document.createElement('div')
@@ -122,8 +119,6 @@ const printWin = (player) => {
     winSplash.addEventListener('click', acknowledgeWin)
     gridBackground.appendChild(winSplash)
     player==='x'?xWinCount++:oWinCount++
-    
-    console.log(`Win Position = ${winPosition} || Winner = ${winner}`)
 
 }
 
@@ -142,7 +137,7 @@ const checkTie = () => {
 }
 
 const checkWin = (player) => {
-    (checkCol(player)==true||checkRow(player)==true||checkDia(player)==true)?printWin(player):checkTie()
+    (checkCol(player,3)==true||checkRow(player,3)==true||checkDia(player)==true)?printWin(player):checkTie()
 }
 
 
@@ -166,7 +161,6 @@ const drawO = () => {
 const drawAny = () => {
     (turnCount % 2 === 0)?drawO():drawX();
     turnCount++;
-    console.log(moveTracker)
 }
 
 const pushListener = () => {
@@ -211,3 +205,111 @@ const resetAlert = () => {
         document.querySelector('#win-tracker').innerText = `Player X Wins = ${xWinCount} || Player O Wins = ${oWinCount}`
     }
 }
+
+// const winCondition = {
+//     r1 : [moveTracker.c1r1,moveTracker.c2r1,moveTracker.c3r1],
+//     r2 : [moveTracker.c1r2,moveTracker.c2r2,moveTracker.c3r2],
+//     r3 : [moveTracker.c1r3,moveTracker.c2r3,moveTracker.c3r3],
+//     c1 : [moveTracker.c1r1,moveTracker.c1r2,moveTracker.c1r3],
+//     c2 : [moveTracker.c2r1,moveTracker.c2r2,moveTracker.c2r3],
+//     c3 : [moveTracker.c3r1,moveTracker.c3r2,moveTracker.c3r3],
+//     d1 : [moveTracker.c1r1,moveTracker.c2r2,moveTracker.c3r3],
+//     d2 : [moveTracker.c3r1,moveTracker.c2r2,moveTracker.c1r3],
+// }
+
+
+
+const aiMoveCalc = () => {
+    console.log(`win position: ${winPosition}`)
+    let aiMove = ''
+    const winCondition = {
+        r1 : ['c1r1','c2r1','c3r1'],
+        r2 : ['c1r2','c2r2','c3r2'],
+        r3 : ['c1r3','c2r3','c3r3'],
+        c1 : ['c1r1','c1r2','c1r3'],
+        c2 : ['c2r1','c2r2','c2r3'],
+        c3 : ['c3r1','c3r2','c3r3'],
+        d1 : ['c1r1','c3r3'],
+        d2 : ['c3r1','c1r3'],
+    }
+    const aiDiaCheck = (player, pos) => {
+        if (moveTracker.c2r2 === player) {
+            for (let value of winCondition[pos]) {
+                if (moveTracker[value] === player) {
+                    for (let empty of winCondition[pos]) {
+                        if (moveTracker[empty] === '') {
+                            aiMove = empty
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    console.log(`Row O ${checkRow('o',2)}`)
+    console.log(`Row X ${checkRow('x',2)}`)
+    console.log(`Col O ${checkCol('o',2)}`)
+    console.log(`Col X ${checkCol('x',2)}`)  
+    if (aiMove === '') {
+        if (checkRow('o',2) === true) {
+            for(let value of winCondition[winPosition]) {
+                console.log(moveTracker[value])
+                if (moveTracker[value] === '') {
+                    aiMove = value
+                } 
+            }
+        } else if (checkCol('o',2) === true) {
+            for(let value of winCondition[winPosition]) {
+                console.log(moveTracker[value])
+                if (moveTracker[value] === '') {
+                    aiMove = value
+                }
+            }
+        } else if (aiDiaCheck('o','d1')===true){    
+        } else if (aiDiaCheck('o','d2')===true){           
+        }else if (checkRow('x',2) === true) {
+            for(let value of winCondition[winPosition]) {
+                console.log(moveTracker[value])
+                if (moveTracker[value] === '') {
+                    aiMove = value
+                }
+            }
+        }  else if (checkCol('x',2) === true) {
+            for(let value of winCondition[winPosition]) {
+                console.log(moveTracker[value])
+                if (moveTracker[value] === '') {
+                aiMove = value
+                }
+            }
+        } else if (aiDiaCheck('x','d1')===true){    
+        } else if (aiDiaCheck('x','d2')===true){           
+        } else if (checkRow('o',1) === true) {
+            for(let value of winCondition[winPosition]) {
+                console.log(moveTracker[value])
+                if (moveTracker[value] === '') {
+                    aiMove = value
+                } 
+            }
+        } else if (checkCol('o',1) === true) {
+            for(let value of winCondition[winPosition]) {
+                console.log(moveTracker[value])
+                if (moveTracker[value] === '') {
+                    aiMove = value
+                } 
+            }
+        }  else { const arr = []
+            for (let [prop, value] of Object.entries(moveTracker)) {
+                if (value === '') {
+                    arr.push(prop)
+                }               
+            }
+            const rand = Math.floor(Math.random() * arr.length)
+            console.log(arr)
+            console.log(arr[rand])
+            aiMove =  arr[rand]
+        }  
+    }
+    console.log(`Best Move: ${aiMove}`)    
+}
+
