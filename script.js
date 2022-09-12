@@ -119,6 +119,7 @@ const drawWin = () => {
 }
 
 const printWin = (player) => {
+    
     drawWin()
     const playerCap = player.toUpperCase()
     const winSplash = document.createElement('div')
@@ -198,7 +199,7 @@ const clearAll = () => {
             moveTracker[`c${c}r${r}`] = ''    
         }
     }
-    document.querySelector('.instructions').innerext = `Player X's Turn\n(click any square to start)`
+    document.querySelector('.instructions').innerText = `Player X's Turn\n(click any square to start)`
 }
 
 const acknowledgeWin = () => {
