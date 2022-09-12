@@ -1,5 +1,5 @@
 let turnCount = 1
-
+let vsComputer = false
 const moveTracker = {
     c1r1 : '',
     c2r1 : '',
@@ -159,8 +159,17 @@ const drawO = () => {
 }
  
 const drawAny = () => {
-    (turnCount % 2 === 0)?drawO():drawX();
-    turnCount++;
+    (turnCount % 2 === 0)?drawO():drawX()
+    if (turnCount === 1) {
+        document.querySelector('.instructions').style.visibility = 'hidden'
+    }
+    ++turnCount
+    if (vsComputer === 'true' && turnCount%2 === 0  && document.querySelector('.winSplash') === null) {
+        // added a timer because the computer was moving so quickly i got freaked out
+        setTimeout(function(){
+            aiMoveCalc()
+        }, 350);
+    }
 }
 
 const pushListener = () => {
@@ -182,6 +191,7 @@ const clearAll = () => {
             moveTracker[`c${c}r${r}`] = ''    
         }
     }
+    document.querySelector('.instructions').style.visibility = 'visible'
 }
 
 const acknowledgeWin = () => {
@@ -196,32 +206,55 @@ const resetAlert = () => {
     let text = "Warning! Resetting will clear the game board and reset the win counters\nClick 'OK' to proceed of 'Cancel' to go back."
     if (confirm(text) === true) {
         clearAll()
-        if (winner != null) {
+        if (document.querySelector('.winSplash') != undefined) {
             document.querySelector('.winSplash').remove()
+        }
+        if (document.querySelector('.winLine') != undefined){
             document.querySelector('.winLine').remove()
         }
+        
         xWinCount = 0
         oWinCount = 0
         document.querySelector('#win-tracker').innerText = `Player X Wins = ${xWinCount} || Player O Wins = ${oWinCount}`
     }
 }
 
-// const winCondition = {
-//     r1 : [moveTracker.c1r1,moveTracker.c2r1,moveTracker.c3r1],
-//     r2 : [moveTracker.c1r2,moveTracker.c2r2,moveTracker.c3r2],
-//     r3 : [moveTracker.c1r3,moveTracker.c2r3,moveTracker.c3r3],
-//     c1 : [moveTracker.c1r1,moveTracker.c1r2,moveTracker.c1r3],
-//     c2 : [moveTracker.c2r1,moveTracker.c2r2,moveTracker.c2r3],
-//     c3 : [moveTracker.c3r1,moveTracker.c3r2,moveTracker.c3r3],
-//     d1 : [moveTracker.c1r1,moveTracker.c2r2,moveTracker.c3r3],
-//     d2 : [moveTracker.c3r1,moveTracker.c2r2,moveTracker.c1r3],
-// }
+const gameTypeAlert = () =>{
+    if (turnCount > 1) {
+        let text = "Warning! Changing the game type in the middle of a game will clear the game board and reset the win counters\nClick 'OK' to proceed of 'Cancel' to go back."
+        if (confirm(text) === true) {
+            clearAll()
+            xWinCount = 0
+            oWinCount = 0
+            document.querySelector('#win-tracker').innerText = `Player X Wins = ${xWinCount} || Player O Wins = ${oWinCount}`
+            vsComputer = document.querySelector('#type').value
+            if (document.querySelector('.winSplash') != undefined) {
+                document.querySelector('.winSplash').remove()
+            }
+            if (document.querySelector('.winLine') != undefined){
+                document.querySelector('.winLine').remove()
+            }
+        } else {
+            document.querySelector('#type').value = "false"
+        }
+    } else {
+        xWinCount = 0
+        oWinCount = 0
+        document.querySelector('#win-tracker').innerText = `Player X Wins = ${xWinCount} || Player O Wins = ${oWinCount}`
+        vsComputer = document.querySelector('#type').value
+        if (document.querySelector('.winSplash') != undefined) {
+            document.querySelector('.winSplash').remove()
+        }
+        if (document.querySelector('.winLine') != undefined){
+            document.querySelector('.winLine').remove()
+        }
+    }
+}
 
-
-
+//this is probably super inefficient. I didn't define win conditions as an object when just building player vs player, so i do it here and use my win check events to dictate the computers move. chunky chunky.
+//given more time I would allow for the computer to go first by just tweaking these events with more params but that will wait
 const aiMoveCalc = () => {
-    console.log(`win position: ${winPosition}`)
-    let aiMove = ''
+    let diaMove =''
     const winCondition = {
         r1 : ['c1r1','c2r1','c3r1'],
         r2 : ['c1r2','c2r2','c3r2'],
@@ -229,87 +262,108 @@ const aiMoveCalc = () => {
         c1 : ['c1r1','c1r2','c1r3'],
         c2 : ['c2r1','c2r2','c2r3'],
         c3 : ['c3r1','c3r2','c3r3'],
-        d1 : ['c1r1','c3r3'],
-        d2 : ['c3r1','c1r3'],
+        d1 : ['c1r1','c2r2','c3r3'],
+        d2 : ['c3r1','c2r2','c1r3'],
     }
     const aiDiaCheck = (player, pos) => {
-        if (moveTracker.c2r2 === player) {
-            for (let value of winCondition[pos]) {
-                if (moveTracker[value] === player) {
-                    for (let empty of winCondition[pos]) {
-                        if (moveTracker[empty] === '') {
-                            aiMove = empty
-                            return true
-                        }
+        count = 0
+        for (let value of winCondition[pos]) {
+            if (moveTracker[value] === player) {
+                count++
+            }
+            if (count === 2) {
+                for (let newVal of winCondition[pos]) {
+                    if (moveTracker[newVal] === '') {
+                        diaMove = newVal
+                        return true
                     }
                 }
-            }
+            }    
         }
+        return false
     }
-    
-    console.log(`Row O ${checkRow('o',2)}`)
-    console.log(`Row X ${checkRow('x',2)}`)
-    console.log(`Col O ${checkCol('o',2)}`)
-    console.log(`Col X ${checkCol('x',2)}`)  
-    if (aiMove === '') {
+    const nextBestOne =() => {
+        for (let value of winCondition[winPosition]){
+            if (moveTracker[value] === 'x') {
+                return false
+            } 
+        } 
+        return true
+    }
+   const aiMove = () => {
         if (checkRow('o',2) === true) {
             for(let value of winCondition[winPosition]) {
-                console.log(moveTracker[value])
                 if (moveTracker[value] === '') {
-                    aiMove = value
-                } 
+                    return value
+                } winPosition = null
             }
-        } else if (checkCol('o',2) === true) {
+        } 
+        if (checkCol('o',2) === true) {
             for(let value of winCondition[winPosition]) {
-                console.log(moveTracker[value])
                 if (moveTracker[value] === '') {
-                    aiMove = value
-                }
+                    return value
+                } winPosition = null
             }
-        } else if (aiDiaCheck('o','d1')===true){    
-        } else if (aiDiaCheck('o','d2')===true){           
-        }else if (checkRow('x',2) === true) {
+        }
+        if (aiDiaCheck('o','d1')===true){
+            return diaMove    
+        }
+        if (aiDiaCheck('o','d2')===true){
+            return diaMove           
+        }
+        if (checkRow('x',2) === true) {
             for(let value of winCondition[winPosition]) {
-                console.log(moveTracker[value])
                 if (moveTracker[value] === '') {
-                    aiMove = value
-                }
+                    return value
+                } winPosition = null
             }
-        }  else if (checkCol('x',2) === true) {
+        } 
+        if (checkCol('x',2) === true) {
             for(let value of winCondition[winPosition]) {
-                console.log(moveTracker[value])
                 if (moveTracker[value] === '') {
-                aiMove = value
-                }
+                    return value
+                } winPosition = null
             }
-        } else if (aiDiaCheck('x','d1')===true){    
-        } else if (aiDiaCheck('x','d2')===true){           
-        } else if (checkRow('o',1) === true) {
+        }
+        if (aiDiaCheck('x','d1')===true){
+            return diaMove    
+        }
+        if (aiDiaCheck('x','d2')===true){
+            return diaMove            
+        }
+        if (checkRow('o',1) === true && nextBestOne() === true) {
             for(let value of winCondition[winPosition]) {
-                console.log(moveTracker[value])
                 if (moveTracker[value] === '') {
-                    aiMove = value
-                } 
+                    return value
+                } winPosition = null
             }
-        } else if (checkCol('o',1) === true) {
+        }
+        if (checkCol('o',1) === true && nextBestOne() === true) {
             for(let value of winCondition[winPosition]) {
-                console.log(moveTracker[value])
                 if (moveTracker[value] === '') {
-                    aiMove = value
-                } 
+                    return value
+                } winPosition = null
             }
-        }  else { const arr = []
+        }
+        if (moveTracker.c2r2 === '') {
+            return 'c2r2'
+         
+        } 
+        if (moveTracker.c2r2 === 'x'){
+            return 'c1r1'
+        }
+            const arr = []
             for (let [prop, value] of Object.entries(moveTracker)) {
                 if (value === '') {
                     arr.push(prop)
-                }               
+                }  winPosition = null             
             }
             const rand = Math.floor(Math.random() * arr.length)
-            console.log(arr)
-            console.log(arr[rand])
-            aiMove =  arr[rand]
-        }  
+            return  arr[rand]
+          
     }
-    console.log(`Best Move: ${aiMove}`)    
+    const move = aiMove()
+    document.getElementById(`${move}`).click();
+    
 }
 

@@ -15,6 +15,13 @@
     <div id = "win-tracker">
         Player X Wins = 0 || Player O Wins = 0
     </div> 
+        <p>
+        <select name="game-type" id="type" onchange="gameTypeAlert()">
+            <option value="false">Human vs Human</option>
+            <option value="true">Human vs Computer</option>
+          </select>
+        <p class="instructions">(Click Any Square to Begin)</p>  
+    </p>
     <div class="grid-background">
         <div class="grid" id="c1r1"></div>
         <div class="grid" id="c2r1"></div>
@@ -30,7 +37,6 @@
 
     <p>
         <button type="button" onclick="resetAlert()">RESET</button>
-        <button type=""button onClick="aiMoveCalc()">Test AI</button>
     </p>
 </body>
 </html>
