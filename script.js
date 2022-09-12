@@ -20,7 +20,15 @@ let winPosition = null
 const grid = document.querySelectorAll('.grid')
 const gridBackground = document.querySelector('.grid-background') 
 
-
+const playerInd = (player) => {
+    let text = ''
+    if (vsComputer == 'true' && player == 'O') {
+        text = `(computer) `
+        } else if (vsComputer == 'true' && player == 'X') {
+        text = `(player) `
+    }
+    return `Player ${player}'s ${text}turn\n(pick any empty square)`
+}
 const checkRow = (player,value) => {
     
     for (r = 1; r <=3; r++){
@@ -148,6 +156,7 @@ const drawX = () => {
     const id = event.target.id
     moveTracker[id] = 'x'
     checkWin('x')
+    document.querySelector('.instructions').innerText = playerInd('O')
 }
 
 const drawO = () => {
@@ -156,13 +165,11 @@ const drawO = () => {
     const id = event.target.id
     moveTracker[id] = 'o'    
     checkWin('o')
+    document.querySelector('.instructions').innerText = playerInd('X')
 }
  
 const drawAny = () => {
     (turnCount % 2 === 0)?drawO():drawX()
-    if (turnCount === 1) {
-        document.querySelector('.instructions').style.visibility = 'hidden'
-    }
     ++turnCount
     if (vsComputer === 'true' && turnCount%2 === 0  && document.querySelector('.winSplash') === null) {
         // added a timer because the computer was moving so quickly i got freaked out
@@ -191,7 +198,7 @@ const clearAll = () => {
             moveTracker[`c${c}r${r}`] = ''    
         }
     }
-    document.querySelector('.instructions').style.visibility = 'visible'
+    document.querySelector('.instructions').innerext = `Player X's Turn\n(click any square to start)`
 }
 
 const acknowledgeWin = () => {
