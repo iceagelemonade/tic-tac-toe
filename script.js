@@ -290,6 +290,13 @@ const aiMoveCalc = () => {
         }
         return false
     }
+    const aiDiaCheckGotcha = () => {
+        if (moveTracker.c2r2 === 'o' && moveTracker.c1r1 === '' && moveTracker.c3r3 === '') {
+            return 'c1r1'
+        } else if (moveTracker.c2r2 === 'o' && moveTracker.c3r1 === '' && moveTracker.c1r3 === '') {
+            return 'c3r1'
+        }
+    }
     const nextBestOne =() => {
         for (let value of winCondition[winPosition]){
             if (moveTracker[value] === 'x') {
@@ -352,6 +359,9 @@ const aiMoveCalc = () => {
                     return value
                 } winPosition = null
             }
+        }
+        if (aiDiaCheckGotcha() !== undefined){
+            return aiDiaCheckGotcha()
         }
         if (moveTracker.c2r2 === '') {
             return 'c2r2'
